@@ -1,0 +1,99 @@
+interface IStudent {
+    name: string;
+    email: string;
+    course: string;
+    country: string;
+}
+
+interface IAddress {
+		street: string;
+    state: string;
+    country: string;
+}
+
+interface IHashable {
+    hash(): string;
+    equals(IHashable): boolean;
+}
+
+interface Node {
+	key: any;
+  value: any;
+}
+
+class Address implements IAddress {
+	  private street: string;
+    private state: string;
+    private country: string;
+    constructor(address: IAddress) {
+        this.street = address.street;
+        this.state = address.state;
+        this.country = address.country;
+    }
+}
+
+class Student implements IStudent, IHashable {
+    private name: string;
+    private email: string;
+    private course: string;
+    private country: string;
+    constructor(student: IStudent) {
+        this.name = student.name;
+        this.email = student.email;
+        this.course = student.course;
+        this.country = student.country;
+    }
+    public hash() {
+    	let res = 0;
+      for(let i=0; i<this.email.length; i++) {
+        res += this.email.charCodeAt(i) * i ^ 0xFFFF;
+      }
+      return res;
+    }
+    public equals(student: any) {
+    	return student.country === this.country;
+    }
+}
+
+class HashTable<IHashable, T> {
+    // private object: T;
+		private table: any[][] = [];
+    private tableLength: number = 10;
+    constructor() {}
+    public add(key: IHashable, object: T) {
+        let hash = key.hash();
+        this.insert(this.hashToIndex(hash), {key: key, value: object});
+    }
+    public get(target: IHashable): T {
+    		let hash = target.hash();
+        let index = this.hashToIndex(hash);
+        for(let i = 0; i<this.table[index].length;i++) {
+          if(target.equals(this.table[index][i].key)) {
+            return this.table[index][i].value;
+          }
+        }
+        console.log('not found');
+    }
+    private insert(index: number, node: Node) {
+    	if(!this.table[index]) {
+      	this.table[index] = [node];
+      } else {
+ 	     	this.table[index].push(node);
+      }
+    }
+    private hashToIndex(hash: string): number {
+    	return hash % 10;
+    }
+    public display() {
+    	console.log('Hash Table: ', this.table);
+    }
+}
+
+const ht = new HashTable();
+
+ht.add(new Student({name: 'Bob', email: 'bob@yahoo.com', course: 'Liteature', country: 'US'}), new Address({street: 'Baker', state: 'CA', country: 'US'}));
+ht.add(new Student({name: 'Pit', email: 'pit@gmail.com', course: 'Math', country: 'RU'}), new Address({street: 'Lenina', state: 'LO', country: 'RU'}));
+ht.add(new Student({name: 'Mary', email: 'mary@gmail.com', course: 'Music', country: 'US'}), new Address({street: 'Market', state: 'CA', country: 'US'}));
+ht.add(new Student({name: 'Sue', email: 'sue@gmail.com', course: 'Theatre', country: 'SI'}), new Address({street: 'Huy-Pong', state: 'HU', country: 'SI'}));
+
+console.log('Address: ', ht.get(new Student({email: 'bob@yahoo.com', country: 'US'})));
