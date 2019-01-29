@@ -17,7 +17,7 @@ interface IHashable {
 }
 
 interface Node {
-	key: any;
+	key: IHashable;
   value: any;
 }
 
@@ -78,6 +78,12 @@ class HashTable<IHashable, T> {
     	if(!this.table[index]) {
       	this.table[index] = [node];
       } else {
+        for(let i = 0; i<this.table[index].length;i++) {
+          if(node.key.equals(this.table[index][i].key)) {
+            this.table[index][i].value = node.value;
+            return;
+          }
+        }
  	     	this.table[index].push(node);
       }
     }
@@ -95,5 +101,8 @@ ht.add(new Student({name: 'Bob', email: 'bob@yahoo.com', course: 'Liteature', co
 ht.add(new Student({name: 'Pit', email: 'pit@gmail.com', course: 'Math', country: 'RU'}), new Address({street: 'Lenina', state: 'LO', country: 'RU'}));
 ht.add(new Student({name: 'Mary', email: 'mary@gmail.com', course: 'Music', country: 'US'}), new Address({street: 'Market', state: 'CA', country: 'US'}));
 ht.add(new Student({name: 'Sue', email: 'sue@gmail.com', course: 'Theatre', country: 'SI'}), new Address({street: 'Huy-Pong', state: 'HU', country: 'SI'}));
+ht.add(new Student({name: 'Sue', email: 'sue@gmail.com', course: 'Theatre', country: 'SI'}), new Address({street: 'Huy-Pong 2', state: 'HU', country: 'SI'}));
 
-console.log('Address: ', ht.get(new Student({email: 'bob@yahoo.com', country: 'US'})));
+console.log('Get Address By Student: ', ht.get(new Student({email: 'bob@yahoo.com', country: 'US'})));
+
+ht.display();
