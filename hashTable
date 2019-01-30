@@ -88,7 +88,7 @@ class HashTable<IHashable, T> {
       }
     }
     private hashToIndex(hash: string): number {
-    	return hash % 10;
+    	return hash % this.tableLength;
     }
     public display() {
     	console.log('Hash Table: ', this.table);
